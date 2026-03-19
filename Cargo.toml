@@ -1,11 +1,11 @@
 [package]
-name = "xinghedesk"
+name = "rustdesk"
 version = "1.4.6"
 authors = ["baosys <admin@xinghepay.com>"]
 edition = "2021"
 build= "build.rs"
 description = "XingheDesk Remote Desktop"
-default-run = "xinghedesk"
+default-run = "rustdesk"
 rust-version = "1.75"
 
 [lib]
@@ -216,7 +216,7 @@ libxdo-sys = { path = "libs/libxdo-sys-stub" }
 LegalCopyright = "Copyright © 2025 Purslane Ltd. All rights reserved."
 ProductName = "XingheDesk"
 FileDescription = "XingheDesk Remote Desktop"
-OriginalFilename = "xinghedesk.exe"
+OriginalFilename = "rustdesk.exe"
 
 [target.'cfg(target_os="windows")'.build-dependencies]
 winres = "0.1"
