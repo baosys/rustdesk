@@ -259,11 +259,17 @@ jobs:
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
 
+      - name: Rename exe for MSI branding
+        if: env.UPLOAD_ARTIFACT == 'true'
+        shell: bash
+        run: |
+          mv ./rustdesk/rustdesk.exe ./rustdesk/XingheDesk.exe
+
       - name: Build msi
         if: env.UPLOAD_ARTIFACT == 'true'
         run: |
           pushd ./res/msi
-          python preprocess.py --arp -d ../../rustdesk
+          python preprocess.py --arp --app-name XingheDesk -d ../../rustdesk
           nuget restore msi.sln
           msbuild msi.sln -p:Configuration=Release -p:Platform=x64 /p:TargetVersion=Windows10
           mv ./Package/bin/x64/Release/en-us/Package.msi ../../SignOutput/xinghedesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
@@ -274,6 +280,20 @@ jobs:
         shell: bash
         run: |
           BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./SignOutput
+
+      - name: Upload exe artifact
+        if: env.UPLOAD_ARTIFACT == 'true'
+        uses: actions/upload-artifact@master
+        with:
+          name: xinghedesk-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
+          path: ./SignOutput/xinghedesk-${{ env.VERSION }}-${{ matrix.job.arch }}.exe
+
+      - name: Upload msi artifact
+        if: env.UPLOAD_ARTIFACT == 'true'
+        uses: actions/upload-artifact@master
+        with:
+          name: xinghedesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
+          path: ./SignOutput/xinghedesk-${{ env.VERSION }}-${{ matrix.job.arch }}.msi
 
       - name: Publish Release
         if: env.UPLOAD_ARTIFACT == 'true' && env.PUBLISH_RELEASE == 'true'
